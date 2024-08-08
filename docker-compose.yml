@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      REDIS_URI: "redis"
+      REDIS_PORT: 6379
+    depends_on:
+      - redis
+    command: ["npm", "run", "start"]
+
+  worker:
+    build: .
+    environment:
+      REDIS_URI: "redis"
+      REDIS_PORT: 6379
+    depends_on:
+      - redis
+    command: ["npm", "run", "dev:worker"]
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisDB:/data
+
+volumes:
+  redisDB:
